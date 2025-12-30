@@ -5,10 +5,28 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.common.by import By
 import time
+import requests
 import random
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def send_telegram(message):
+    token = os.getenv("TELEGRAM_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    url = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={message}"
+
+    try:
+        requests.get(url)
+    except Exception as e:
+        print(f"Failed to send Telegram: {e}")
 
 def check_stock():
     options = webdriver.ChromeOptions()
+    options.add_argument("--headless=new") # Runs Chrome in the background
+    options.add_argument("--window-size=1920,1080") # Helps render the page correctly
+    options.add_argument("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
@@ -31,6 +49,9 @@ def check_stock():
                     if "add to bag" in text:
                         print("Item of size s is available")
                         found_actionable_button = True
+                        msg = f"Lululemon: Your item is in stock! {url}"
+                        send_telegram(msg)
+                        print("Notification sent to Telegram")
                         # send message to telegram
                         break
                     elif "sold out" in text or "notify me" in text:
