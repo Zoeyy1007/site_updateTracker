@@ -1,6 +1,3 @@
-Here is a clean, professional README for your Lululemon Stock Tracker. It follows the "best practices" you've learned during this process, focusing on clarity and security.
-
----
 
 # Lululemon Inventory Tracker
 
